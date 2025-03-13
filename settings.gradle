@@ -1,2 +1,3 @@
 rootProject.name = '2025_01_kuzmin'
+include 'task1'
 

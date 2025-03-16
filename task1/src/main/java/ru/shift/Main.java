@@ -14,13 +14,15 @@ public class Main {
         final int squareLength = String.valueOf(size * size).length();
         final int length = String.valueOf(size).length();
         final String sep = "-".repeat(length) + ("+" + "-".repeat(squareLength)).repeat(size);
+        StringBuilder numLine;
 
         for (int i = 0; i <= size; i++) {
-            System.out.printf("%" + length + "s", i == 0 ? "" : i);//%10s
+            numLine = new StringBuilder();
+            numLine.append(String.format("%" + length + "s", i == 0 ? "" : i));
             for (int j = 1; j <= size; j++) {
-                System.out.printf("|" + "%" + squareLength + "d", (i == 0 ? 1 : i) * j);
+                numLine.append(String.format("|" + "%" + squareLength + "d", (i == 0 ? 1 : i) * j));
             }
-            System.out.println();
+            System.out.println(numLine);
             System.out.println(sep);
         }
     }

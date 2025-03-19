@@ -1,43 +1,37 @@
 package ru.shift;
 
+import java.io.PrintWriter;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
+    private static final int FLOOR_LIMIT = 1;
+    private static final int CEIL_LIMIT = 32;
+
     public static void main(String[] args) {
-        int tableSize = parseArg();
-        if (tableSize != -1) {
-            printTable(tableSize);
+        int tableSize = 1;
+        try {
+            tableSize = readTableSize();
+        } catch (IllegalArgumentException | InputMismatchException e) {
+            System.exit(0);
         }
+
+        TableWriter.printTable(tableSize, new PrintWriter(System.out, true));
     }
 
-    public static void printTable(int size) {
-        final int squareLength = String.valueOf(size * size).length();
-        final int length = String.valueOf(size).length();
-        final String sep = "-".repeat(length) + ("+" + "-".repeat(squareLength)).repeat(size);
-        StringBuilder numLine;
 
-        for (int i = 0; i <= size; i++) {
-            numLine = new StringBuilder();
-            numLine.append(String.format("%" + length + "s", i == 0 ? "" : i));
-            for (int j = 1; j <= size; j++) {
-                numLine.append(String.format("|" + "%" + squareLength + "d", (i == 0 ? 1 : i) * j));
-            }
-            System.out.println(numLine);
-            System.out.println(sep);
-        }
-    }
-
-    public static int parseArg() {
+    private static int readTableSize() {
         Scanner in = new Scanner(System.in);
         int num;
         try {
+            System.out.printf("Write table size between %d and %d%n", FLOOR_LIMIT, CEIL_LIMIT);
             num = in.nextInt();
             if (num < 1 || 32 < num) {
-                throw new Exception();
+                throw new IllegalArgumentException(String.format("Table size not between %d and %d", FLOOR_LIMIT, CEIL_LIMIT));
             }
-        } catch (Exception e) {
-            System.out.println("Only integer numbers between 1 and 32");
-            return -1;
+        } catch (IllegalArgumentException | InputMismatchException e) {
+            System.out.printf("Only integer numbers between %d and %d%n", FLOOR_LIMIT, CEIL_LIMIT);
+            throw e;
         }
 
         return num;

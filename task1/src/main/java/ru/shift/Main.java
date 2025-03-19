@@ -9,16 +9,13 @@ public class Main {
     private static final int CEIL_LIMIT = 32;
 
     public static void main(String[] args) {
-        int tableSize = 1;
         try {
-            tableSize = readTableSize();
+            int tableSize = readTableSize();
+            TableWriter.printTable(tableSize, new PrintWriter(System.out, true));
         } catch (IllegalArgumentException | InputMismatchException e) {
             System.exit(0);
         }
-
-        TableWriter.printTable(tableSize, new PrintWriter(System.out, true));
     }
-
 
     private static int readTableSize() {
         Scanner in = new Scanner(System.in);
@@ -26,7 +23,7 @@ public class Main {
         try {
             System.out.printf("Write table size between %d and %d%n", FLOOR_LIMIT, CEIL_LIMIT);
             num = in.nextInt();
-            if (num < 1 || 32 < num) {
+            if (num < FLOOR_LIMIT || CEIL_LIMIT < num) {
                 throw new IllegalArgumentException(String.format("Table size not between %d and %d", FLOOR_LIMIT, CEIL_LIMIT));
             }
         } catch (IllegalArgumentException | InputMismatchException e) {

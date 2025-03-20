@@ -13,6 +13,8 @@ public class Main {
             int tableSize = readTableSize();
             TableWriter.printTable(tableSize, new PrintWriter(System.out, true));
         } catch (IllegalArgumentException | InputMismatchException e) {
+            System.out.printf("Only integer numbers between %d and %d%n", FLOOR_LIMIT, CEIL_LIMIT);
+            System.out.println ("Exception: " + e.getMessage());
             System.exit(0);
         }
     }
@@ -20,15 +22,11 @@ public class Main {
     private static int readTableSize() {
         Scanner in = new Scanner(System.in);
         int num;
-        try {
-            System.out.printf("Write table size between %d and %d%n", FLOOR_LIMIT, CEIL_LIMIT);
-            num = in.nextInt();
-            if (num < FLOOR_LIMIT || CEIL_LIMIT < num) {
-                throw new IllegalArgumentException(String.format("Table size not between %d and %d", FLOOR_LIMIT, CEIL_LIMIT));
-            }
-        } catch (IllegalArgumentException | InputMismatchException e) {
-            System.out.printf("Only integer numbers between %d and %d%n", FLOOR_LIMIT, CEIL_LIMIT);
-            throw e;
+
+        System.out.printf("Write table size between %d and %d%n", FLOOR_LIMIT, CEIL_LIMIT);
+        num = in.nextInt();
+        if (num < FLOOR_LIMIT || CEIL_LIMIT < num) {
+            throw new IllegalArgumentException(String.format("Table size not between %d and %d", FLOOR_LIMIT, CEIL_LIMIT));
         }
 
         return num;

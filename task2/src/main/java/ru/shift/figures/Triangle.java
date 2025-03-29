@@ -12,6 +12,7 @@ public class Triangle extends Figure {
     private double angleAgainstA;
     private double angleAgainstB;
     private double angleAgainstC;
+    private final static int argsCount = 3;
 
     private Triangle(double a, double b, double c) {
         shapeType = ShapeType.TRIANGLE;
@@ -33,21 +34,21 @@ public class Triangle extends Figure {
     }
 
     public static Triangle fromString(String line) throws NumberFormatException {
-        String[] stringArr = line.split(" ");
-        if (stringArr.length != 3) {
-            log.error("Invalid number of parameters for Triangle: {}", stringArr.length);
+        String[] params = extractShapeParameters(line);
+        if (params.length != argsCount) {
+            log.error("Invalid number of parameters for Triangle: {}", params.length);
             throw new IllegalNumberOfParametersException("Invalid number of parameters for Triangle");
         }
 
-        double a = check(Double.parseDouble(stringArr[0]));
-        double b = check(Double.parseDouble(stringArr[1]));
-        double c = check(Double.parseDouble(stringArr[2]));
+        double a = check(Double.parseDouble(params[0]));
+        double b = check(Double.parseDouble(params[1]));
+        double c = check(Double.parseDouble(params[2]));
         checkIfTriangle(a, b, c);
 
         return new Triangle(a, b, c);
     }
 
-    public static Triangle ofSides(double a, double b, double c) {
+    public static Triangle fromSides(double a, double b, double c) {
         check(a);
         check(b);
         check(c);

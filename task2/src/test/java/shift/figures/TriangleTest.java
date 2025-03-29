@@ -17,7 +17,7 @@ class TriangleTest {
 
     @BeforeAll
     static void beforeAll() {
-        triangle = Triangle.ofSides(a, b, c);
+        triangle = Triangle.fromSides(a, b, c);
     }
 
     @Test

@@ -9,6 +9,7 @@ public class Rectangle extends Figure {
     private final double a;
     private final double b;
     private double diagonal;
+    private final static int argsCount = 2;
 
     private Rectangle(double a, double b) {
         shapeType = ShapeType.RECTANGLE;
@@ -27,17 +28,17 @@ public class Rectangle extends Figure {
     }
 
     public static Rectangle fromString(String line) {
-        String[] stringArr = line.split(" ");
-        if (stringArr.length != 2) {
+        String[] params = extractShapeParameters(line);
+        if (params.length != argsCount) {
             throw new IllegalNumberOfParametersException("Invalid number of parameters for Rectangle");
         }
 
-        double a = check(Double.parseDouble(stringArr[0]));
-        double b = check(Double.parseDouble(stringArr[1]));
+        double a = check(Double.parseDouble(params[0]));
+        double b = check(Double.parseDouble(params[1]));
         return new Rectangle(a, b);
     }
 
-    public static Rectangle ofSides(double a, double b) {
+    public static Rectangle fromSides(double a, double b) {
         check(a);
         check(b);
         return new Rectangle(a, b);

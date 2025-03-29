@@ -16,7 +16,7 @@ class RectangleTest {
 
     @BeforeAll
     static void beforeAll() {
-        rectangle = Rectangle.ofSides(a, b);
+        rectangle = Rectangle.fromSides(a, b);
     }
 
     @Test

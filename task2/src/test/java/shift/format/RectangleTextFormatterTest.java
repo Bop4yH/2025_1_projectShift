@@ -16,7 +16,7 @@ class RectangleTextFormatterTest {
                 "Длина диагонали: 10,2 см%n" +
                 "Длина: 10 см%n" +
                 "Ширина: 2 см%n");
-        String act = TextFormatter.toText(Rectangle.ofSides(10, 2));
+        String act = TextFormatter.toText(Rectangle.fromSides(10, 2));
         assertThat(act).isEqualTo(exp);
     }
 }

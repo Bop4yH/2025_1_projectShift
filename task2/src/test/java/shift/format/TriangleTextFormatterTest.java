@@ -19,7 +19,7 @@ class TriangleTextFormatterTest {
                 "Угол противолежащий стороне B: 53,13 град%n" +
                 "Сторона C: 5 см%n" +
                 "Угол противолежащий стороне C: 90 град%n");
-        String act = TextFormatter.toText(Triangle.ofSides(3, 4, 5));
+        String act = TextFormatter.toText(Triangle.fromSides(3, 4, 5));
         assertThat(act).isEqualTo(exp);
     }
 }

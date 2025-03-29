@@ -14,9 +14,8 @@ public class Options {
     private Path outputFilePath;
     private boolean isValid = false;
 
-    enum OutputMode {CONSOLE, FILE}
-
-    OutputMode outputMode = OutputMode.CONSOLE;
+    private enum OutputMode {CONSOLE, FILE}
+    private OutputMode outputMode = OutputMode.CONSOLE;
 
     private Options() {
     }

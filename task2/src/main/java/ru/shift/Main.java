@@ -18,18 +18,23 @@ public class Main {
         log.info("Program start");
 
         var options = Options.parseCommandLine(args);
-        if (options == null) System.exit(0);
+        if (options == null) {
+            System.exit(0);
+        }
 
         try (var in = Files.newBufferedReader(options.getInputPath())) {
             var out = options.isFileMode()
                     ? new PrintWriter(Files.newBufferedWriter(options.getOutputPath()), true)
                     : new PrintWriter(System.out, true);
-
-            var figure = FigureFactory.readFigure(in);
-            out.println(TextFormatter.toText(figure));
-            if (options.isFileMode()) {
-                out.close();
+            try {
+                var figure = FigureFactory.readFigure(in);
+                out.println(TextFormatter.toText(figure));
+            }finally {
+                if (options.isFileMode()) {
+                    out.close();
+                }
             }
+
         } catch (FigureCreationException e) {
             System.exit(0);
         } catch (IOException e) {

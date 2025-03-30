@@ -3,7 +3,7 @@ package ru.shift.figures;
 import ru.shift.exceptions.NegativeParameterException;
 
 public abstract class Figure {
-    protected static final String parameterDelimiter = " ";
+    protected static final String PARAMETERS_DELIMITER = " ";
     protected double perimeter;
     protected double area;
     protected ShapeType shapeType;
@@ -40,7 +40,7 @@ public abstract class Figure {
     }
 
     protected static String[] extractShapeParameters(String line) {
-        return line.split(parameterDelimiter);
+        return line.split(PARAMETERS_DELIMITER);
     }
 }
 

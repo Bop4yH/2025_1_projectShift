@@ -6,13 +6,13 @@ import ru.shift.exceptions.IllegalTriangleSidesLengthException;
 import static ru.shift.Main.log;
 
 public class Triangle extends Figure {
+    private static final int ARGS_COUNT = 3;
     private final double a;
     private final double b;
     private final double c;
     private double angleAgainstA;
     private double angleAgainstB;
     private double angleAgainstC;
-    private final static int argsCount = 3;
 
     private Triangle(double a, double b, double c) {
         shapeType = ShapeType.TRIANGLE;
@@ -20,7 +20,6 @@ public class Triangle extends Figure {
         this.b = b;
         this.c = c;
     }
-
 
     @Override
     protected double evaluatePerimeter() {
@@ -35,7 +34,7 @@ public class Triangle extends Figure {
 
     public static Triangle fromString(String line) throws NumberFormatException {
         String[] params = extractShapeParameters(line);
-        if (params.length != argsCount) {
+        if (params.length != ARGS_COUNT) {
             log.error("Invalid number of parameters for Triangle: {}", params.length);
             throw new IllegalNumberOfParametersException("Invalid number of parameters for Triangle");
         }

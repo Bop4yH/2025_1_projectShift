@@ -4,12 +4,10 @@ import ru.shift.exceptions.IllegalNumberOfParametersException;
 
 
 public class Rectangle extends Figure {
-
-
+    private static final int ARGS_COUNT = 2;
     private final double a;
     private final double b;
     private double diagonal;
-    private final static int argsCount = 2;
 
     private Rectangle(double a, double b) {
         shapeType = ShapeType.RECTANGLE;
@@ -29,7 +27,7 @@ public class Rectangle extends Figure {
 
     public static Rectangle fromString(String line) {
         String[] params = extractShapeParameters(line);
-        if (params.length != argsCount) {
+        if (params.length != ARGS_COUNT) {
             throw new IllegalNumberOfParametersException("Invalid number of parameters for Rectangle");
         }
 

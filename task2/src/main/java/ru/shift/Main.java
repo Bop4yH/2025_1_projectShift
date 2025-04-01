@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 
+
 public class Main {
     public static final Logger log = LoggerFactory.getLogger(Main.class);
 
@@ -22,19 +23,19 @@ public class Main {
             System.exit(0);
         }
 
+        var out = new PrintWriter(System.out, true);
         try (var in = Files.newBufferedReader(options.getInputPath())) {
-            var out = options.isFileMode()
-                    ? new PrintWriter(Files.newBufferedWriter(options.getOutputPath()), true)
-                    : new PrintWriter(System.out, true);
             try {
+                if (options.isFileMode()) {
+                    out = new PrintWriter(Files.newBufferedWriter(options.getOutputPath()), true);
+                }
                 var figure = FigureFactory.readFigure(in);
                 out.println(TextFormatter.toText(figure));
-            }finally {
+            } finally {
                 if (options.isFileMode()) {
                     out.close();
                 }
             }
-
         } catch (FigureCreationException e) {
             System.exit(0);
         } catch (IOException e) {

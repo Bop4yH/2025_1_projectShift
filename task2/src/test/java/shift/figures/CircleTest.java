@@ -10,23 +10,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CircleTest {
-    final static double radius = 10;
+    static final double RADIUS = 10;
     static Circle circle;
 
     @BeforeAll
     static void beforeAll() {
-        circle = Circle.ofRadius(radius);
+        circle = Circle.ofRadius(RADIUS);
     }
 
     @Test
     void testGetRadius() {
         double act = circle.getRadius();
-        assertThat(act).isEqualTo(radius);
+        assertThat(act).isEqualTo(RADIUS);
     }
 
     @Test
     void testEvaluateArea() {
-        double exp = radius * radius * Math.PI;
+        double exp = RADIUS * RADIUS * Math.PI;
         double act = circle.getArea();
         assertThat(act).isEqualTo(exp);
     }
@@ -41,14 +41,14 @@ class CircleTest {
 
     @Test
     void testGetPerimeter() {
-        double exp = 2 * Math.PI * radius;
+        double exp = 2 * Math.PI * RADIUS;
         double act = circle.getPerimeter();
         assertThat(act).isEqualTo(exp);
     }
 
     @Test
     void testGetDiameter() {
-        double exp = radius * 2;
+        double exp = RADIUS * 2;
         double act = circle.getDiameter();
         assertThat(act).isEqualTo(exp);
     }

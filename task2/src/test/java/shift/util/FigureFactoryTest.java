@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 class FigureFactoryTest {
 
     @Test
-    public void testRead_Figure_Circle() throws IOException {
+    void testRead_Figure_Circle() throws IOException {
         BufferedReader mockReader = Mockito.mock(BufferedReader.class);
         when(mockReader.readLine()).thenReturn("CIRCLE", "5.0");
 
@@ -28,7 +28,7 @@ class FigureFactoryTest {
     }
 
     @Test
-    public void testRead_Figure_Rectangle() throws IOException {
+    void testRead_Figure_Rectangle() throws IOException {
         BufferedReader mockReader = Mockito.mock(BufferedReader.class);
         when(mockReader.readLine()).thenReturn("RECTANGLE", "3 4");
 
@@ -39,7 +39,7 @@ class FigureFactoryTest {
     }
 
     @Test
-    public void testRead_Figure_Triangle() throws IOException {
+    void testRead_Figure_Triangle() throws IOException {
         BufferedReader mockReader = Mockito.mock(BufferedReader.class);
         when(mockReader.readLine()).thenReturn("TRIANGLE", "3 4 5");
 

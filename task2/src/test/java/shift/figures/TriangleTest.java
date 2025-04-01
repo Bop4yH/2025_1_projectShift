@@ -10,44 +10,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TriangleTest {
-    final static double a = 3;
-    final static double b = 4;
-    final static double c = 5;
+    static final  double A = 3;
+    static final  double B = 4;
+    static final  double C = 5;
     static Triangle triangle;
 
     @BeforeAll
     static void beforeAll() {
-        triangle = Triangle.fromSides(a, b, c);
+        triangle = Triangle.fromSides(A, B, C);
     }
 
     @Test
     void testGetA() {
         double act = triangle.getA();
-        assertThat(act).isEqualTo(a);
+        assertThat(act).isEqualTo(A);
     }
 
     @Test
     void testGetB() {
         double act = triangle.getB();
-        assertThat(act).isEqualTo(b);
+        assertThat(act).isEqualTo(B);
     }
 
     @Test
     void testGetC() {
         double act = triangle.getC();
-        assertThat(act).isEqualTo(c);
+        assertThat(act).isEqualTo(C);
     }
 
     @Test
     void testEvaluateAngleAgainstA() {
-        double exp = Math.toDegrees(Math.acos((b * b + c * c - a * a) / (2 * b * c)));
+        double exp = Math.toDegrees(Math.acos((B * B + C * C - A * A) / (2 * B * C)));
         double act = triangle.getAngleAgainstA();
         assertThat(act).isEqualTo(exp);
     }
 
     @Test
     void testEvaluateAngleAgainstB() {
-        double exp = Math.toDegrees(Math.acos((a * a + c * c - b * b) / (2 * a * c)));
+        double exp = Math.toDegrees(Math.acos((A * A + C * C - B * B) / (2 * A * C)));
         double act = triangle.getAngleAgainstB();
         assertThat(act).isEqualTo(exp);
 
@@ -55,15 +55,15 @@ class TriangleTest {
 
     @Test
     void testEvaluateAngleAgainstC() {
-        double exp = Math.toDegrees(Math.acos((a * a + b * b - c * c) / (2 * a * b)));
+        double exp = Math.toDegrees(Math.acos((A * A + B * B - C * C) / (2 * A * B)));
         double act = triangle.getAngleAgainstC();
         assertThat(act).isEqualTo(exp);
     }
 
     @Test
     void testEvaluateArea() {
-        double p = (a + b + c) / 2;
-        double exp = Math.sqrt((p * (p - a) * (p - b) * (p - c)));
+        double p = (A + B + C) / 2;
+        double exp = Math.sqrt((p * (p - A) * (p - B) * (p - C)));
         double act = triangle.getArea();
         assertThat(act).isEqualTo(exp);
     }
@@ -77,7 +77,7 @@ class TriangleTest {
 
     @Test
     void testEvaluatePerimeter() {
-        double exp = a + b + c;
+        double exp = A + B + C;
         double act = triangle.getPerimeter();
         assertThat(act).isEqualTo(exp);
     }

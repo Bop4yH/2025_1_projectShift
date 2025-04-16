@@ -1,5 +1,8 @@
 package ru.shift.view;
 
+import ru.shift.dto.GameType;
+import ru.shift.data.RecordManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -26,7 +29,7 @@ public class HighScoresWindow extends JDialog {
         contentPane.add(mediumRecordLabel = createLabel(DEFAULT_RECORD_TEXT, layout, gridY++, 0));
 
         contentPane.add(createLabel("Expert:", layout, gridY++, 10));
-        contentPane.add(expertRecordLabel = createLabel(DEFAULT_RECORD_TEXT, layout, gridY++, 0));
+        contentPane.add(expertRecordLabel = createLabel(DEFAULT_RECORD_TEXT, layout, gridY, 0));
 
         contentPane.add(createCloseButton(layout));
 
@@ -85,5 +88,15 @@ public class HighScoresWindow extends JDialog {
         layout.setConstraints(okButton, gbc);
 
         return okButton;
+    }
+
+    public void updateHighScores(RecordManager manager) {
+        RecordManager.Record novice = manager.getRecord(GameType.NOVICE);
+        RecordManager.Record medium = manager.getRecord(GameType.MEDIUM);
+        RecordManager.Record expert = manager.getRecord(GameType.EXPERT);
+
+        setNoviceRecord(novice.playerName(), novice.timeInSeconds());
+        setMediumRecord(medium.playerName(), medium.timeInSeconds());
+        setExpertRecord(expert.playerName(), expert.timeInSeconds());
     }
 }

@@ -1,15 +1,17 @@
 package ru.shift.view;
 
+import ru.shift.dto.GameType;
+
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class SettingsWindow extends JDialog {
-    private final Map<GameType, JRadioButton> radioButtonsMap = new HashMap<>(3);
+    private final Map<GameType, JRadioButton> radioButtonsMap = new EnumMap<>(GameType.class);
     private final ButtonGroup radioGroup = new ButtonGroup();
 
-    private GameTypeListener gameTypeListener;
+    private transient GameTypeListener gameTypeListener;
     private GameType gameType;
 
     public SettingsWindow(JFrame owner) {
@@ -22,7 +24,7 @@ public class SettingsWindow extends JDialog {
         int gridY = 0;
         contentPane.add(createRadioButton("Novice (10 mines, 9х9)", GameType.NOVICE, layout, gridY++));
         contentPane.add(createRadioButton("Medium (40 mines, 16х16)", GameType.MEDIUM, layout, gridY++));
-        contentPane.add(createRadioButton("Expert (99 mines, 16х30)", GameType.EXPERT, layout, gridY++));
+        contentPane.add(createRadioButton("Expert (99 mines, 16х30)", GameType.EXPERT, layout, gridY));
 
         contentPane.add(createOkButton(layout));
         contentPane.add(createCloseButton(layout));
@@ -34,6 +36,7 @@ public class SettingsWindow extends JDialog {
         setLocationRelativeTo(null);
 
         setGameType(GameType.NOVICE);
+
     }
 
     public void setGameType(GameType gameType) {

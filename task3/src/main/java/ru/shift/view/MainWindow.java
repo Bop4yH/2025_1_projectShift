@@ -1,25 +1,31 @@
 package ru.shift.view;
 
+import ru.shift.dto.CellViewData;
+import ru.shift.dto.GameType;
+import ru.shift.model.CellState;
+import ru.shift.model.ModelObserver;
+import ru.shift.timer.TimerObserver;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MainWindow extends JFrame {
+
+public class MainWindow extends JFrame implements ModelObserver, TimerObserver {
     private final Container contentPane;
     private final GridBagLayout mainLayout;
-
     private JMenuItem newGameMenu;
     private JMenuItem highScoresMenu;
     private JMenuItem settingsMenu;
     private JMenuItem exitMenu;
-
-    private CellEventListener listener;
-
+    private transient CellEventListener listener;
     private JButton[][] cellButtons;
     private JLabel timerLabel;
     private JLabel bombsCounterLabel;
+    private transient ActionListener newGameActionListener;
+    private transient GameStateListener gameStateListener;
 
     public MainWindow() {
         super("Miner");
@@ -32,7 +38,7 @@ public class MainWindow extends JFrame {
         mainLayout = new GridBagLayout();
         contentPane.setLayout(mainLayout);
 
-        contentPane.setBackground(new Color(144, 158, 184));
+        contentPane.setBackground(new Color(178, 196, 230));
     }
 
     private void createMenu() {
@@ -52,6 +58,8 @@ public class MainWindow extends JFrame {
 
     public void setNewGameMenuAction(ActionListener listener) {
         newGameMenu.addActionListener(listener);
+        this.newGameActionListener = listener;
+
     }
 
     public void setHighScoresMenuAction(ActionListener listener) {
@@ -119,10 +127,10 @@ public class MainWindow extends JFrame {
                                 listener.onMouseClick(x, y, ButtonType.LEFT_BUTTON);
                                 break;
                             case MouseEvent.BUTTON2:
-                                listener.onMouseClick(x, y, ButtonType.RIGHT_BUTTON);
+                                listener.onMouseClick(x, y, ButtonType.MIDDLE_BUTTON);
                                 break;
                             case MouseEvent.BUTTON3:
-                                listener.onMouseClick(x, y, ButtonType.MIDDLE_BUTTON);
+                                listener.onMouseClick(x, y, ButtonType.RIGHT_BUTTON);
                                 break;
                             default:
                                 // Other mouse buttons are ignored
@@ -192,4 +200,84 @@ public class MainWindow extends JFrame {
         mainLayout.setConstraints(label, gbc);
         contentPane.add(label);
     }
+
+    @Override
+    public void onCellChanged(int x, int y, CellViewData data) {
+        updateCell(x, y, data);
+    }
+
+    private void updateCell(int x, int y, CellViewData data) {
+        GameImage imageToSet;
+
+        CellState cellState = data.state();
+        imageToSet = switch (cellState) {
+            case CLOSED -> GameImage.CLOSED;
+            case FLAGGED -> GameImage.MARKED;
+            case INCORRECT_FLAG -> GameImage.INCORRECT_FLAG;
+            case OPENED -> {
+                int adjacentMines = data.neighboringMines();
+                yield switch (adjacentMines) {
+                    case 1 -> GameImage.NUM_1;
+                    case 2 -> GameImage.NUM_2;
+                    case 3 -> GameImage.NUM_3;
+                    case 4 -> GameImage.NUM_4;
+                    case 5 -> GameImage.NUM_5;
+                    case 6 -> GameImage.NUM_6;
+                    case 7 -> GameImage.NUM_7;
+                    case 8 -> GameImage.NUM_8;
+                    default -> GameImage.EMPTY;
+                };
+            }
+            case EXPLODED -> GameImage.EXPLODED;
+            case MINE -> GameImage.BOMB;
+        };
+
+        setCellImage(x, y, imageToSet);
+
+    }
+
+    @Override
+    public void onGameWon() {
+
+        WinWindow winWindow = new WinWindow(this);
+        winWindow.setNewGameListener(newGameActionListener);
+        winWindow.setExitListener(e -> dispose());
+
+        if (gameStateListener != null) {
+            gameStateListener.onGameWon();
+        }
+        SwingUtilities.invokeLater(() -> winWindow.setVisible(true));
+    }
+
+    @Override
+    public void onGameLost() {
+        LoseWindow loseWindow = new LoseWindow(this);
+        loseWindow.setNewGameListener(newGameActionListener);
+        loseWindow.setExitListener(e -> dispose());
+        SwingUtilities.invokeLater(() -> loseWindow.setVisible(true));
+        if (gameStateListener != null) {
+            gameStateListener.onGameLost();
+        }
+    }
+
+    @Override
+    public void onRemainingMinesChanged(int remaining) {
+        setBombsCount(remaining);
+    }
+
+    @Override
+    public void onGameStarted(GameType gameType) {
+        createGameField(gameType.getRows(), gameType.getColumns());
+    }
+
+    public void setGameStateListener(GameStateListener listener) {
+        this.gameStateListener = listener;
+    }
+
+    @Override
+    public void onTimerTick(int secondsElapsed) {
+        setTimerValue(secondsElapsed);
+    }
+
+
 }

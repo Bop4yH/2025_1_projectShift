@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RecordsWindow extends JDialog {
-    private RecordNameListener nameListener;
+    private transient RecordNameListener nameListener;
 
     public RecordsWindow(JFrame frame) {
         super(frame, "New Record", true);
@@ -24,7 +24,7 @@ public class RecordsWindow extends JDialog {
         setResizable(false);
         pack();
         setLocationRelativeTo(null);
-        setVisible(true);
+
     }
 
     public void setNameListener(RecordNameListener nameListener) {

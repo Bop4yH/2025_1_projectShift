@@ -5,8 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class WinWindow extends JDialog {
-    private ActionListener newGameListener;
-    private ActionListener exitListener;
+    private transient ActionListener newGameListener;
+    private transient ActionListener exitListener;
 
     public WinWindow(JFrame owner) {
         super(owner, "Win", true);
@@ -24,7 +24,7 @@ public class WinWindow extends JDialog {
         setResizable(false);
         pack();
         setLocationRelativeTo(null);
-        setVisible(true);
+        setVisible(false);
     }
 
     public void setNewGameListener(ActionListener newGameListener) {
@@ -63,7 +63,7 @@ public class WinWindow extends JDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0.5;
@@ -88,7 +88,7 @@ public class WinWindow extends JDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0.5;

@@ -17,7 +17,8 @@ public enum GameImage {
     BOMB("mine.png"),
     TIMER("timer.png"),
     BOMB_ICON("mineImage.png"),
-    ;
+    INCORRECT_FLAG("missFlag.png"),
+    EXPLODED("explodedMine.png");
 
     private final String fileName;
     private ImageIcon imageIcon;

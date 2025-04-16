@@ -5,8 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class LoseWindow extends JDialog {
-    private ActionListener newGameListener;
-    private ActionListener exitListener;
+    private transient ActionListener newGameListener;
+    private transient ActionListener exitListener;
 
     public LoseWindow(JFrame owner) {
         super(owner, "Lose", true);
@@ -24,7 +24,7 @@ public class LoseWindow extends JDialog {
         setResizable(false);
         pack();
         setLocationRelativeTo(null);
-        setVisible(true);
+
     }
 
     public void setNewGameListener(ActionListener newGameListener) {

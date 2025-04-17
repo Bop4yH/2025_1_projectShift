@@ -10,7 +10,7 @@ public class GameTimer {
     private final List<TimerObserver> observers = new ArrayList<>();
     private ScheduledExecutorService executor;
     private int elapsedSeconds = 0;
-
+    private long startTime;
     public void addObserver(TimerObserver observer) {
         observers.add(observer);
     }
@@ -20,14 +20,17 @@ public class GameTimer {
     }
 
     public void start() {
-        elapsedSeconds = 0;
+        startTime = System.currentTimeMillis();
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
-            elapsedSeconds++;
-            for (TimerObserver observer : observers) {
-                observer.onTimerTick(elapsedSeconds);
+            int nowElapsed = (int)((System.currentTimeMillis() - startTime) / 1000);
+            if (nowElapsed > elapsedSeconds) {
+                elapsedSeconds = nowElapsed;
+                for (TimerObserver observer : observers) {
+                    observer.onTimerTick(elapsedSeconds);
+                }
             }
-        }, 1, 1, TimeUnit.SECONDS);
+        }, 0, 100, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {

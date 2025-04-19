@@ -36,7 +36,8 @@ public class MathSeriesTask extends RecursiveTask<BigDecimal> {
                 sum = sum.add(term, mc);
                 i = i.add(BigInteger.ONE);
             }
-            log.info("Вычисление от {} до {} завершено. Результат: {}. ", start, end, sum);
+
+            log.info("Вычисление от {} до {} завершено. Результат: {}. ", start, end, sum.toPlainString());
             return sum;
 
         } else {

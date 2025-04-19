@@ -14,7 +14,7 @@ public class Main{
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         log.info("Введите значение N: ");
-        BigInteger N = new BigInteger(scanner.nextLine());
+        BigInteger numberN = new BigInteger(scanner.nextLine());
 
         ForkJoinPool pool = new ForkJoinPool();
 
@@ -22,8 +22,8 @@ public class Main{
         long startTime = System.currentTimeMillis();
 
         int numThreads = Runtime.getRuntime().availableProcessors();
-        BigInteger threshold = N.divide(BigInteger.valueOf(numThreads * 8L));
-        MathSeriesTask task = new MathSeriesTask(BigInteger.ONE, N,threshold);
+        BigInteger threshold = numberN.divide(BigInteger.valueOf(numThreads * 8L));
+        MathSeriesTask task = new MathSeriesTask(BigInteger.ONE, numberN,threshold);
         BigDecimal result = pool.invoke(task);
 
         long endTime = System.currentTimeMillis();

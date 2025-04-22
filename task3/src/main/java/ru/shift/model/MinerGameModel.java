@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Queue;
 
 public class MinerGameModel{
-    GameType gameType;
-    MineField mineField;
+    private GameType gameType;
+    private MineField mineField;
 
     private GameStatus status = GameStatus.IN_PROGRESS;
     private final List<ModelObserver> observers = new ArrayList<>();

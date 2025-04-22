@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MineField {
-    Cell[][] field;
+    private Cell[][] field;
     private final int width;
     private final int height;
     private final int totalMines;
@@ -21,19 +21,19 @@ public class MineField {
         initEmptyField();
     }
 
-    int getFlaggedCells() {
+    public int getFlaggedCells() {
         return flaggedCells;
     }
 
-    int getTotalMines() {
+    public int getTotalMines() {
         return totalMines;
     }
 
-    int getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    int getHeight() {
+    public int getHeight() {
         return height;
     }
 
@@ -67,11 +67,11 @@ public class MineField {
         }
     }
 
-    Cell getCell(int x, int y) {
+    public Cell getCell(int x, int y) {
         return field[y][x];
     }
 
-    void openCell(int x, int y) {
+    public void openCell(int x, int y) {
         if (!canOpenCell(x, y)) return;
         field[y][x].open();
         if (field[y][x].getCellType() != CellType.BOMB) {
@@ -107,12 +107,12 @@ public class MineField {
                 && !field[y][x].isMissFlagged();
     }
 
-    boolean canOpenCell(Point p) {
+    public boolean canOpenCell(Point p) {
         return canOpenCell(p.x, p.y);
     }
 
 
-    protected List<Point> getNeighbors(int x, int y) {
+    public List<Point> getNeighbors(int x, int y) {
         List<Point> neighbors = new ArrayList<>();
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
@@ -135,7 +135,7 @@ public class MineField {
         }
     }
 
-    protected int flagsAround(int x, int y) {
+    public int flagsAround(int x, int y) {
         int amountOfFlags = 0;
         for (Point index : getNeighbors(x, y)) {
             if (field[index.y][index.x].isFlagged()) {

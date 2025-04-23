@@ -1,16 +1,16 @@
 package ru.shift.model;
 
 import ru.shift.dto.GameType;
+import ru.shift.util.Point;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MineField {
-    private Cell[][] field;
     private final int width;
     private final int height;
     private final int totalMines;
+    private Cell[][] field;
     private int clearedCells;
     private int flaggedCells;
 

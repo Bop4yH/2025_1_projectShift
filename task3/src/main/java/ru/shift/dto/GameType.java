@@ -1,7 +1,7 @@
 package ru.shift.dto;
 
 public enum GameType {
-    NOVICE(9, 9, 2),
+    NOVICE(9, 9, 10),
     MEDIUM(16, 16, 40),
     EXPERT(16, 30, 99);
 

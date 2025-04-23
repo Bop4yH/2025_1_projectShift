@@ -2,15 +2,14 @@ package ru.shift.timer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class GameTimer {
     private final List<TimerObserver> observers = new ArrayList<>();
-    private ScheduledExecutorService executor;
-    private int elapsedSeconds = 0;
-    private long startTime;
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new DaemonThreadFactory());
+    private volatile int elapsedSeconds = 0;
+    private ScheduledFuture<?> task;
+
     public void addObserver(TimerObserver observer) {
         observers.add(observer);
     }
@@ -20,10 +19,10 @@ public class GameTimer {
     }
 
     public void start() {
-        startTime = System.currentTimeMillis();
-        executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(() -> {
-            int nowElapsed = (int)((System.currentTimeMillis() - startTime) / 1000);
+        long startTime = System.nanoTime();
+
+        task = executor.scheduleAtFixedRate(() -> {
+            int nowElapsed = (int) ((System.nanoTime() - startTime) / 1_000_000_000L); // переводим в секунды
             if (nowElapsed > elapsedSeconds) {
                 elapsedSeconds = nowElapsed;
                 for (TimerObserver observer : observers) {
@@ -34,16 +33,28 @@ public class GameTimer {
     }
 
     public void stop() {
-        if (executor != null) {
-            executor.shutdownNow();
+        if (task != null) {
+            task.cancel(false);
         }
     }
+
 
     public void reset() {
         stop();
         elapsedSeconds = 0;
         for (TimerObserver observer : observers) {
             observer.onTimerTick(elapsedSeconds);
+        }
+    }
+
+    private static class DaemonThreadFactory implements ThreadFactory {
+        private final ThreadFactory defaultFactory = Executors.defaultThreadFactory();
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thread = defaultFactory.newThread(r);
+            thread.setDaemon(true);
+            return thread;
         }
     }
 }

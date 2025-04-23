@@ -1,29 +1,25 @@
 package ru.shift.model;
 
 import ru.shift.dto.CellViewData;
-
 import ru.shift.dto.GameType;
+import ru.shift.util.Point;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class MinerGameModel{
+public class MinerGameModel {
+    private final List<ModelObserver> observers = new ArrayList<>();
     private GameType gameType;
     private MineField mineField;
-
+    private boolean firstClick = false;
     private GameStatus status = GameStatus.IN_PROGRESS;
-    private final List<ModelObserver> observers = new ArrayList<>();
+    private Runnable onGameStart;
 
     public MinerGameModel() {
         gameType = GameType.NOVICE;
         mineField = new MineField(gameType);
-    }
-
-    public MineField getMineField() {
-        return mineField;
     }
 
     public void addObserver(ModelObserver observer) {
@@ -34,6 +30,11 @@ public class MinerGameModel{
         return gameType;
     }
 
+    public void setDifficulty(GameType difficulty) {
+        gameType = difficulty;
+        mineField = new MineField(gameType);
+    }
+
     private void notifyCellChanged(int x, int y) {
         Cell cell = mineField.getCell(x, y);
         CellViewData data = cell.toViewData();
@@ -42,7 +43,6 @@ public class MinerGameModel{
             observer.onCellChanged(x, y, data);
         }
     }
-
 
     public void notifyGameWon() {
         for (ModelObserver observer : observers) {
@@ -73,13 +73,20 @@ public class MinerGameModel{
     public void resetGame() {
         mineField = new MineField(gameType);
         status = GameStatus.IN_PROGRESS;
+        firstClick = false;
         notifyGameStarted();
 
     }
 
     public void openCell(int x, int y) {
         if (status != GameStatus.IN_PROGRESS) return;
-
+        if (!firstClick) {
+            mineField.placeBombsExcluding(x, y);
+            firstClick = true;
+            if (onGameStart != null) {
+                onGameStart.run();
+            }
+        }
         revealEmptyArea(new Point(x, y));
 
         if (mineField.getCell(x, y).isBomb()) {
@@ -88,7 +95,6 @@ public class MinerGameModel{
             notifyGameLost();
         }
     }
-
 
     private void openAndNotify(int x, int y) {
         mineField.openCell(x, y);
@@ -146,11 +152,6 @@ public class MinerGameModel{
         }
     }
 
-    public void setDifficulty(GameType difficulty) {
-        gameType = difficulty;
-        mineField = new MineField(gameType);
-    }
-
     public void attemptOpenAround(int x, int y) {
         if (mineField.flagsAround(x, y) != mineField.getCell(x, y).getNeighboringMines()
                 || mineField.getCell(x, y).getCellType() != CellType.NUMBER
@@ -188,7 +189,7 @@ public class MinerGameModel{
         for (int y = 0; y < mineField.getHeight(); y++) {
             for (int x = 0; x < mineField.getWidth(); x++) {
                 Cell cell = mineField.getCell(x, y);
-                if (cell.getCellType() == CellType.BOMB) {
+                if (cell.isBomb()) {
                     cell.openMine();
                 } else {
                     mineField.getCell(x, y).markIncorrectFlag();
@@ -196,5 +197,9 @@ public class MinerGameModel{
                 notifyCellChanged(x, y);
             }
         }
+    }
+
+    public void setOnGameStart(Runnable callback) {
+        this.onGameStart = callback;
     }
 }

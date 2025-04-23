@@ -1,9 +1,9 @@
 package ru.shift.controller;
 
+import ru.shift.data.RecordManager;
 import ru.shift.dto.GameType;
 import ru.shift.model.MinerGameModel;
 import ru.shift.timer.GameTimer;
-import ru.shift.data.RecordManager;
 import ru.shift.view.GameStateListener;
 import ru.shift.view.HighScoresWindow;
 import ru.shift.view.MainWindow;
@@ -15,7 +15,6 @@ public class MinerController implements Controller, GameStateListener {
     private final GameTimer timer = new GameTimer();
     private final RecordManager recordManager = new RecordManager();
     private final HighScoresWindow highScoresWindow;
-    private boolean firstClick = true;
 
     public MinerController(MinerGameModel model, MainWindow view, HighScoresWindow highScoresWindow) {
         this.model = model;
@@ -25,15 +24,11 @@ public class MinerController implements Controller, GameStateListener {
         this.view.setGameStateListener(this);
         this.model.addObserver(view);
         this.highScoresWindow.updateHighScores(recordManager);
+        this.model.setOnGameStart(timer::start);
     }
 
     @Override
     public void onLeftClick(int x, int y) {
-        if (firstClick) {
-            model.getMineField().placeBombsExcluding(x, y);
-            timer.start();
-            firstClick = false;
-        }
         model.openCell(x, y);
     }
 
@@ -50,7 +45,6 @@ public class MinerController implements Controller, GameStateListener {
     @Override
     public void resetGame() {
         model.resetGame();
-        firstClick = true;
         timer.reset();
     }
 

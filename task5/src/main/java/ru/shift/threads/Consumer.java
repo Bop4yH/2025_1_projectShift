@@ -1,10 +1,7 @@
 package ru.shift.threads;
 
-import ru.shift.res.Resource;
 import ru.shift.res.ResourceStorage;
-
 import static java.lang.Thread.sleep;
-import static ru.shift.Main.log;
 
 public class Consumer implements Runnable {
     private static final int DEFAULT_WORK_NUM = 10;
@@ -24,11 +21,7 @@ public class Consumer implements Runnable {
         for (int i = 0; i < DEFAULT_WORK_NUM; i++) {
             try {
                 sleep(consumerTime);
-                Resource consumedResource = resourceStorage.getResource();
-
-                int resId = consumedResource.getId();
-                log.debug("consumed {}_id res", resId);
-
+                resourceStorage.consumeResource();
             } catch (InterruptedException ignore) {
             }
         }

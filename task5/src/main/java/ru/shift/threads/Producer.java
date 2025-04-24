@@ -28,11 +28,9 @@ public class Producer implements Runnable {
                 sleep(producerTime);
                 Resource madeResource = new Resource();
 
+                log.debug("made {}_id res", madeResource.getId());
 
-                int resId = madeResource.getId();
-                log.debug("made {}_id res", resId);
-
-                resourceStorage.addResource(new Resource());
+                resourceStorage.addResource(madeResource);
             } catch (InterruptedException ignore) {
             }
         }

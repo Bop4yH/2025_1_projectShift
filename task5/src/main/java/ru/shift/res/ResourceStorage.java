@@ -31,13 +31,13 @@ public class ResourceStorage {
 
             resources.add(resource);
             int size = resources.size();
-            log.debug("{} res at storage. Delivered now.", size);
+            log.debug("{} res at storage. Delivered now {}_id res.", size, resource.getId());
 
             resources.notifyAll();
         }
     }
 
-    public Resource getResource() throws InterruptedException {
+    public void consumeResource() throws InterruptedException {
         synchronized (resources) {
             waitingConsumers++;
 
@@ -50,10 +50,9 @@ public class ResourceStorage {
                 Resource resource = resources.remove();
 
                 int size = resources.size();
-                log.debug("{} res at storage. Consumed now.", size);
+                log.debug("{} res at storage. Consumed now {}_id res.", size,resource.getId());
 
                 resources.notifyAll();
-                return resource;
             } finally {
                 waitingConsumers--;
             }

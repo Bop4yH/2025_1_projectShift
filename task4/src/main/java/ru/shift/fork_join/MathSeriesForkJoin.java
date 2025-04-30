@@ -1,4 +1,4 @@
-package ru.shift;
+package ru.shift.fork_join;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -6,16 +6,16 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.concurrent.RecursiveTask;
 
-import static ru.shift.Main.log;
+import static ru.shift.fork_join.MainForkJoin.log;
 
 
-public class MathSeriesTask extends RecursiveTask<BigDecimal> {
+public class MathSeriesForkJoin extends RecursiveTask<BigDecimal> {
     private static final MathContext mc = new MathContext(50, RoundingMode.HALF_UP);
     private final BigInteger start;
     private final BigInteger end;
     private final BigInteger threshold;
 
-    public MathSeriesTask(BigInteger start, BigInteger end, BigInteger threshold) {
+    public MathSeriesForkJoin(BigInteger start, BigInteger end, BigInteger threshold) {
         this.start = start;
         this.end = end;
         this.threshold = threshold;
@@ -43,8 +43,8 @@ public class MathSeriesTask extends RecursiveTask<BigDecimal> {
         } else {
             BigInteger mid = start.add(end).divide(BigInteger.TWO);
 
-            MathSeriesTask left = new MathSeriesTask(start, mid, threshold);
-            MathSeriesTask right = new MathSeriesTask(mid.add(BigInteger.ONE), end, threshold);
+            MathSeriesForkJoin left = new MathSeriesForkJoin(start, mid, threshold);
+            MathSeriesForkJoin right = new MathSeriesForkJoin(mid.add(BigInteger.ONE), end, threshold);
 
             left.fork();
             BigDecimal rightResult = right.compute();

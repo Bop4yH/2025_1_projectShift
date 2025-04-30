@@ -15,6 +15,8 @@ import java.nio.file.Files;
 public class Main {
     public static final Logger log = LoggerFactory.getLogger(Main.class);
 
+
+
     public static void main(String[] args) {
         log.info("Program start");
 
@@ -22,6 +24,7 @@ public class Main {
         if (options == null) {
             System.exit(0);
         }
+
 
         var out = new PrintWriter(System.out, true);
         try (var in = Files.newBufferedReader(options.getInputPath())) {

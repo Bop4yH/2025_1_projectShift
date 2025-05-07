@@ -3,4 +3,12 @@ include 'task1'
 include 'task2'
 include 'task3'
 
+include 'task6-clean'
 
+include 'task6_'
+include 'task6_:common'
+findProject(':task6_:common')?.name = 'common'
+include 'task6_:client'
+findProject(':task6_:client')?.name = 'client'
+include 'task6_:server'
+findProject(':task6_:server')?.name = 'server'

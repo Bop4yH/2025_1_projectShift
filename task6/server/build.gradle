@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+}
+
+group = 'ru.shift'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+shadowJar {
+    archiveBaseName.set('server-app')
+    archiveClassifier.set('all')
+    archiveVersion.set('')
+}
+dependencies {
+    implementation(project(":task6:common"))
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.3")
+
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    implementation("ch.qos.logback:logback-classic:1.5.16")
+}
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.shift.ChatServer'
+    }
+}
+test {
+    useJUnitPlatform()
+}

@@ -15,20 +15,21 @@ public class MessageUtils {
    private MessageUtils() {
    }
 
-   public static void sendMessage(PrintWriter writer, MessageType type, Object data) {
+   public static void sendMessage(PrintWriter writer, MessageType type, MessageData data) {
       Message msg = new Message(type, data);
       msg.setTimestamp(Instant.now().toEpochMilli());
       sendMessage(writer, msg);
    }
 
    public static void sendMessage(PrintWriter writer, MessageType type) {
-      sendMessage(writer, type, "");
+      sendMessage(writer, type, new PlainText(""));
    }
 
    public static void sendMessage(PrintWriter writer, Message msg) {
       try {
          String json = mapper.writeValueAsString(msg);
          writer.println(json);
+         writer.flush();
          log.info("Message sent: {}", json);
       } catch (JsonProcessingException e) {
          log.error("Error serializing JSON: {}", msg, e);

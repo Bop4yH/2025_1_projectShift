@@ -1,7 +1,6 @@
 package ru.shift.controller;
 
 
-
 import java.io.IOException;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -10,24 +9,35 @@ import org.slf4j.LoggerFactory;
 import ru.shift.common.Message;
 import ru.shift.common.MessageType;
 import ru.shift.common.MessageUtils;
+import ru.shift.common.PlainText;
 import ru.shift.common.UsersData;
+import ru.shift.data.ConnectionData;
 import ru.shift.model.ChatModel;
 import ru.shift.view.format.ChatMessageFormatter;
 import ru.shift.view.format.ChatMessageView;
 import ru.shift.view.ui.ChatClientUI;
 
-
 public class ChatController implements AutoCloseable {
+
    private static final Logger log = LoggerFactory.getLogger(ChatController.class);
    private final ChatModel model;
    private final ChatClientUI view;
-   private final NetworkService net;
+   private NetworkService net;
 
-
-   public ChatController(ChatModel model, ChatClientUI view, NetworkService net) {
+   public ChatController(ChatModel model, ChatClientUI view) {
       this.model = model;
       this.view = view;
-      this.net = net;
+   }
+
+   public boolean attemptConnection(ConnectionData data) {
+      try {
+         net = new NetworkService(data);
+      } catch (IOException ex) {
+         view.showError(ex.getMessage());
+         return false;
+      }
+      start();
+      return true;
    }
 
    public void start() {
@@ -57,11 +67,13 @@ public class ChatController implements AutoCloseable {
          }
 
          public void onError(Throwable t) {
+            if(t == null){
+               return;
+            }
+
             showError(t);
             try {
                close();
-
-
             } catch (Exception ex) {
                log.error("Error with connector closing after disconnect", ex);
             }
@@ -86,7 +98,7 @@ public class ChatController implements AutoCloseable {
          return;
       }
       try {
-         net.send(new Message(MessageType.TEXT, text));
+         net.send(new Message(MessageType.TEXT, new PlainText(text)));
       } catch (IOException ex) {
          showError(ex);
       }
@@ -123,7 +135,7 @@ public class ChatController implements AutoCloseable {
       }
 
       try {
-         net.send(new Message(MessageType.USER_NAME, name));
+         net.send(new Message(MessageType.USER_NAME, new PlainText(name)));
       } catch (IOException e) {
          showError(e);
       }
@@ -136,6 +148,9 @@ public class ChatController implements AutoCloseable {
 
    @Override
    public void close() {
-      net.close();
+      if (net != null) {
+         net.close();
+      }
+      view.dispose();
    }
 }

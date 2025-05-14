@@ -2,13 +2,14 @@ package ru.shift.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shift.config.Config;
 import ru.shift.config.ServerConfig;
+
 
 public class ChatServer {
 
@@ -23,21 +24,9 @@ public class ChatServer {
          log.info("Server started on port {}", PORT);
 
          ClientManager clientManager = new ClientManager();
-         InputProcessor inputProcessor = new InputProcessor(clientManager);
-
-         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-         executor.scheduleWithFixedDelay(inputProcessor, 0, 100, TimeUnit.MILLISECONDS);
-
-         Thread acceptThread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-               clientManager.acceptNewClient(serverSocket);
-            }
-         }, "client-accept-thread");
-
+         ExecutorService pool = Executors.newCachedThreadPool();
          Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            log.info("Shutting down server...");
-            executor.shutdownNow();
-            acceptThread.interrupt();
+            pool.shutdownNow();
             try {
                serverSocket.close();
                log.info("Server socket closed.");
@@ -46,13 +35,12 @@ public class ChatServer {
             }
          }));
 
-         acceptThread.start();
-         acceptThread.join();
-         log.info("Main thread has exited. Server is fully shut down.");
+         while (!Thread.currentThread().isInterrupted()) {
+            Socket socket = serverSocket.accept();
+            ClientConnection client = clientManager.createClient(socket);
+            pool.submit(new ClientHandler(client, clientManager));
+         }
 
-      } catch (InterruptedException e) {
-         Thread.currentThread().interrupt();
-         log.info("Server shutdown requested (thread interrupted).");
       } catch (IOException e) {
          log.error("Server IO error: {}", e.getMessage(), e);
       }

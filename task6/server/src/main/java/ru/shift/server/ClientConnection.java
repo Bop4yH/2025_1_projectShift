@@ -1,30 +1,25 @@
 package ru.shift.server;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.net.Socket;
+import ru.shift.common.TcpConnection;
 
-public class ClientConnection {
+public class ClientConnection extends TcpConnection {
+   private String name;
 
-   final Socket socket;
-   final BufferedReader reader;
-   final PrintWriter writer;
-   final long connectedAt;
-   String name;
-
-   public ClientConnection(Socket socket, BufferedReader reader, PrintWriter writer) {
-      this.socket = socket;
-      this.reader = reader;
-      this.writer = writer;
-      this.connectedAt = System.currentTimeMillis();
+   public ClientConnection(Socket socket) throws IOException {
+      super(socket);
    }
 
    public boolean isRegistered() {
       return name != null;
    }
 
-   @Override
-   public String toString() {
-      return name != null ? name : socket.getRemoteSocketAddress().toString();
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String n) {
+      this.name = n;
    }
 }

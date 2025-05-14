@@ -1,15 +1,23 @@
 package ru.shift.common;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.time.Instant;
 
 public class Message {
     private MessageType type;
-    private Object data;
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "kind")
+    @JsonSubTypes({
+        @JsonSubTypes.Type(value = PlainText.class, name = "plain"),
+        @JsonSubTypes.Type(value = ChatMessageData.class, name = "chat"),
+        @JsonSubTypes.Type(value = UsersData.class, name = "users")
+    })
+    private MessageData data;
     private long timestamp;
 
     public Message() {}  // для Jackson
 
-    public Message(MessageType type, Object data) {
+    public Message(MessageType type, MessageData data) {
         this.type = type;
         this.data = data;
         this.timestamp = Instant.now().toEpochMilli();
@@ -23,11 +31,11 @@ public class Message {
         this.type = type;
     }
 
-    public Object getData() {
+    public MessageData getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(MessageData data) {
         this.data = data;
     }
 

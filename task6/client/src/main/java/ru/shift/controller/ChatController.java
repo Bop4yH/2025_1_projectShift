@@ -7,9 +7,9 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shift.common.Message;
-import ru.shift.common.MessageType;
 import ru.shift.common.MessageUtils;
 import ru.shift.common.PlainText;
+import ru.shift.common.UserName;
 import ru.shift.common.UsersData;
 import ru.shift.data.ConnectionData;
 import ru.shift.model.ChatModel;
@@ -67,16 +67,17 @@ public class ChatController implements AutoCloseable {
          }
 
          public void onError(Throwable t) {
-            if(t == null){
-               return;
-            }
-
             showError(t);
             try {
                close();
             } catch (Exception ex) {
                log.error("Error with connector closing after disconnect", ex);
             }
+         }
+
+         @Override
+         public void onDisconnect() {
+            log.info("Connection with server closed");
          }
       });
    }
@@ -98,7 +99,7 @@ public class ChatController implements AutoCloseable {
          return;
       }
       try {
-         net.send(new Message(MessageType.TEXT, new PlainText(text)));
+         net.send(Message.createPlainTextMessage(new PlainText(text)));
       } catch (IOException ex) {
          showError(ex);
       }
@@ -106,11 +107,11 @@ public class ChatController implements AutoCloseable {
 
    private void handleIncoming(String json) {
       try {
-         Message msg = MessageUtils.mapper().readValue(json, Message.class);
+         Message msg = MessageUtils.deserialize(json);
          switch (msg.getType()) {
-            case TEXT -> model.notifyMessageReceived(msg);
+            case CHAT_MESSAGE -> model.notifyMessageReceived(msg);
             case USERS -> {
-               UsersData data = MessageUtils.mapper().convertValue(msg.getData(), UsersData.class);
+               UsersData data = (UsersData) msg.getData();
                model.notifyUserListReceived(data.users());
             }
             case ENTER_NAME -> askNameLoop(null);
@@ -135,7 +136,7 @@ public class ChatController implements AutoCloseable {
       }
 
       try {
-         net.send(new Message(MessageType.USER_NAME, new PlainText(name)));
+         net.send(Message.createUserNameMessage(new UserName(name)));
       } catch (IOException e) {
          showError(e);
       }

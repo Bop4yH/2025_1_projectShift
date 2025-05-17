@@ -1,7 +1,8 @@
 package ru.shift.common;
 
 public enum MessageType {
-   TEXT,
+   PLAIN_TEXT,
+   CHAT_MESSAGE,
    USER_NAME,
    USERS,
    NAME_TAKEN,

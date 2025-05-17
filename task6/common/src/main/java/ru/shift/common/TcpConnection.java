@@ -1,19 +1,22 @@
 package ru.shift.common;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TcpConnection implements AutoCloseable {
 
+   private static final Logger log = LoggerFactory.getLogger(TcpConnection.class);
    private final Socket socket;
    private final BufferedReader in;
-   private final PrintWriter out;
+   private final BufferedWriter out;
 
    private final CopyOnWriteArrayList<Listener> listeners = new CopyOnWriteArrayList<>();
    private final Object sendLock = new Object();
@@ -22,12 +25,12 @@ public class TcpConnection implements AutoCloseable {
       this.socket = socket;
       this.in = new BufferedReader(
           new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-      this.out = new PrintWriter(
-          new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+      this.out = new BufferedWriter(
+          new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
    }
 
    public void readLoop() {
-      try (socket; in; out) {
+      try {
          String line;
          while ((line = in.readLine()) != null) {
             for (Listener l : listeners) {
@@ -35,7 +38,7 @@ public class TcpConnection implements AutoCloseable {
             }
          }
          for (Listener l : listeners) {
-            l.onError(null);
+            l.onDisconnect();
          }
       } catch (IOException e) {
          for (Listener l : listeners) {
@@ -45,9 +48,10 @@ public class TcpConnection implements AutoCloseable {
    }
 
    public void send(Message msg) throws IOException {
-      String json = MessageUtils.mapper().writeValueAsString(msg);
+      String json = MessageUtils.serialize(msg);
       synchronized (sendLock) {
-         out.println(json);
+         out.write(json + "\n");
+         out.flush();
       }
    }
 
@@ -63,7 +67,10 @@ public class TcpConnection implements AutoCloseable {
    public void close() {
       try {
          socket.close();
-      } catch (IOException ignore) {
+         out.close();
+         in.close();
+      } catch (IOException e) {
+         log.error("Failed to close connection", e);
       }
    }
 
@@ -72,5 +79,7 @@ public class TcpConnection implements AutoCloseable {
       void onRawMessage(String json);
 
       void onError(Throwable t);
+
+      void onDisconnect();
    }
 }

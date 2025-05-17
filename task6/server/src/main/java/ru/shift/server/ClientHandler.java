@@ -1,9 +1,13 @@
 package ru.shift.server;
 
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.shift.common.TcpConnection;
 
 public class ClientHandler implements Runnable {
+
+   private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
    private final ClientManager manager;
    private final ClientConnection client;
 
@@ -29,6 +33,12 @@ public class ClientHandler implements Runnable {
          public void onError(Throwable t) {
             manager.handleDisconnect(client,
                 t instanceof Exception ex ? ex : new IOException(t));
+         }
+
+         @Override
+         public void onDisconnect() {
+            manager.handleDisconnect(client);
+            log.info("Client {} disconnected", client.getName());
          }
       });
       client.readLoop();

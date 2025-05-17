@@ -1,5 +1,6 @@
 package ru.shift.server;
 
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import ru.shift.common.Message;
 import ru.shift.common.MessageType;
 import ru.shift.common.MessageUtils;
 import ru.shift.common.PlainText;
+import ru.shift.common.UserName;
 import ru.shift.common.UsersData;
 
 public class ClientManager {
@@ -24,7 +26,7 @@ public class ClientManager {
    public void register(ClientConnection client) {
       clients.add(client);
       try {
-         client.send(new Message(MessageType.ENTER_NAME, null));
+         client.send(Message.newSignal(MessageType.ENTER_NAME));
       } catch (IOException e) {
          log.warn("Failed to send ENTER_NAME to {}", client, e);
          handleDisconnect(client, e);
@@ -32,17 +34,18 @@ public class ClientManager {
    }
 
    public void handleMessage(ClientConnection client, String json) throws IOException {
-      Message msg = MessageUtils.mapper().readValue(json, Message.class);
+      Message msg = MessageUtils.deserialize(json);
 
       switch (msg.getType()) {
-         case TEXT -> {
+         case PLAIN_TEXT -> {
             String text = ((PlainText) msg.getData()).text();
-            msg.setData(new ChatMessageData(client.getName(), text));
-            broadcastMessage(msg);
+            Message messageToBroadcast = Message.createChatMessage(
+                new ChatMessageData(client.getName(), text));
+            broadcastMessage(messageToBroadcast);
          }
          case USER_NAME -> {
             if (!client.isRegistered()) {
-               String name = ((PlainText) msg.getData()).text();
+               String name = ((UserName) msg.getData()).text();
                if (registerClientName(client, name)) {
                   broadcastUsers();
                   broadcastMessage(createServerMessage(client.getName() + " joined the chat"));
@@ -55,12 +58,17 @@ public class ClientManager {
 
    public void handleDisconnect(ClientConnection client, Exception e) {
       clients.remove(client);
-      if (e != null) {
-         log.warn("Client {} disconnected with error: ", client.getName(),  e);
-      } else {
-         log.info("Client {} disconnected", client.getName());
+      log.warn("Client {} disconnected with error: ", client.getName(), e);
+      if (client.getName() != null) {
+         broadcastMessage(createServerMessage(client.getName() + " disconnected"));
+         broadcastUsers();
       }
-      if(client.getName() != null) {
+      client.close();
+   }
+
+   public void handleDisconnect(ClientConnection client) {
+      clients.remove(client);
+      if (client.getName() != null) {
          broadcastMessage(createServerMessage(client.getName() + " disconnected"));
          broadcastUsers();
       }
@@ -76,7 +84,7 @@ public class ClientManager {
             continue;
          }
          try {
-            client.send(new Message(MessageType.USERS, usersData));
+            client.send(Message.createUsersDataMessage(usersData));
          } catch (IOException e) {
             log.warn("Failed to send USERS to {}", client.getName(), e);
             handleDisconnect(client, e);
@@ -103,7 +111,7 @@ public class ClientManager {
    private boolean registerClientName(ClientConnection client, String proposedName) {
       if (proposedName == null || proposedName.isEmpty()) {
          try {
-            client.send(new Message(MessageType.NAME_EMPTY, null));
+            client.send(Message.newSignal(MessageType.NAME_EMPTY));
          } catch (IOException e) {
             handleDisconnect(client, e);
          }
@@ -115,7 +123,7 @@ public class ClientManager {
 
       if (nameTaken || proposedName.equalsIgnoreCase(SERVER_NAME)) {
          try {
-            client.send(new Message(MessageType.NAME_TAKEN, null));
+            client.send(Message.newSignal(MessageType.NAME_TAKEN));
          } catch (IOException e) {
             handleDisconnect(client, e);
          }
@@ -131,6 +139,6 @@ public class ClientManager {
    }
 
    private Message createServerMessage(String text) {
-      return new Message(MessageType.TEXT, new ChatMessageData(SERVER_NAME, text));
+      return Message.createChatMessage(new ChatMessageData(SERVER_NAME, text));
    }
 }

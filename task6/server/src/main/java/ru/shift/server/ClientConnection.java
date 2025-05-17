@@ -5,6 +5,7 @@ import java.net.Socket;
 import ru.shift.common.TcpConnection;
 
 public class ClientConnection extends TcpConnection {
+
    private String name;
 
    public ClientConnection(Socket socket) throws IOException {

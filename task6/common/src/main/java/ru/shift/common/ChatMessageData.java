@@ -1,3 +1,5 @@
 package ru.shift.common;
 
-public record ChatMessageData(String sender, String text) implements MessageData {}
+public record ChatMessageData(String sender, String text) implements MessageData {
+
+}

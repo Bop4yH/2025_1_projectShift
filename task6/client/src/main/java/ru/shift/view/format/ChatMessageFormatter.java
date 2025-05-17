@@ -8,7 +8,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import ru.shift.common.ChatMessageData;
 import ru.shift.common.Message;
-import ru.shift.common.MessageUtils;
 
 public class ChatMessageFormatter {
 
@@ -19,8 +18,7 @@ public class ChatMessageFormatter {
    }
 
    public static ChatMessageView format(Message message) {
-      ChatMessageData data = MessageUtils.mapper().convertValue(message.getData(),
-          ChatMessageData.class);
+      ChatMessageData data = (ChatMessageData) message.getData();
       String time = TIME_FORMATTER.format(Instant.ofEpochMilli(message.getTimestamp()));
       SimpleAttributeSet style = new SimpleAttributeSet();
 

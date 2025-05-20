@@ -12,8 +12,6 @@ import ru.shift.common.ChatMessageData;
 import ru.shift.common.Message;
 import ru.shift.common.MessageType;
 import ru.shift.common.MessageUtils;
-import ru.shift.common.PlainText;
-import ru.shift.common.UserName;
 import ru.shift.common.UsersData;
 
 public class ClientManager {
@@ -38,14 +36,14 @@ public class ClientManager {
 
       switch (msg.getType()) {
          case PLAIN_TEXT -> {
-            String text = ((PlainText) msg.getData()).text();
+            String text = msg.getPlainText();
             Message messageToBroadcast = Message.createChatMessage(
                 new ChatMessageData(client.getName(), text));
             broadcastMessage(messageToBroadcast);
          }
          case USER_NAME -> {
             if (!client.isRegistered()) {
-               String name = ((UserName) msg.getData()).text();
+               String name = msg.getUserNameData().name();
                if (registerClientName(client, name)) {
                   broadcastUsers();
                   broadcastMessage(createServerMessage(client.getName() + " joined the chat"));

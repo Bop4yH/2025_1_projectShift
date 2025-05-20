@@ -18,7 +18,7 @@ public class ChatMessageFormatter {
    }
 
    public static ChatMessageView format(Message message) {
-      ChatMessageData data = (ChatMessageData) message.getData();
+      ChatMessageData data = message.getChatMessageDataData();
       String time = TIME_FORMATTER.format(Instant.ofEpochMilli(message.getTimestamp()));
       SimpleAttributeSet style = new SimpleAttributeSet();
 

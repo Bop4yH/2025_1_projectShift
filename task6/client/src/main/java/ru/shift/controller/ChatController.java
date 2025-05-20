@@ -111,7 +111,7 @@ public class ChatController implements AutoCloseable {
          switch (msg.getType()) {
             case CHAT_MESSAGE -> model.notifyMessageReceived(msg);
             case USERS -> {
-               UsersData data = (UsersData) msg.getData();
+               UsersData data = msg.getUsersData();
                model.notifyUserListReceived(data.users());
             }
             case ENTER_NAME -> askNameLoop(null);

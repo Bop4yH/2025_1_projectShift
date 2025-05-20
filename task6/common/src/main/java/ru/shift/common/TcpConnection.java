@@ -19,7 +19,6 @@ public class TcpConnection implements AutoCloseable {
    private final BufferedWriter out;
 
    private final CopyOnWriteArrayList<Listener> listeners = new CopyOnWriteArrayList<>();
-   private final Object sendLock = new Object();
 
    public TcpConnection(Socket socket) throws IOException {
       this.socket = socket;
@@ -49,10 +48,8 @@ public class TcpConnection implements AutoCloseable {
 
    public void send(Message msg) throws IOException {
       String json = MessageUtils.serialize(msg);
-      synchronized (sendLock) {
-         out.write(json + "\n");
-         out.flush();
-      }
+      out.write(json + "\n");
+      out.flush();
    }
 
    public void addListener(Listener l) {

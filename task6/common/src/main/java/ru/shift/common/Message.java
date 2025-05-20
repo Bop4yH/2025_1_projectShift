@@ -55,8 +55,20 @@ public class Message {
       return type;
    }
 
-   public MessageData getData() {
-      return data;
+   public String getPlainText() {
+      return ((PlainText) data).text();
+   }
+
+   public UsersData getUsersData() {
+      return (UsersData) data;
+   }
+
+   public ChatMessageData getChatMessageDataData() {
+      return (ChatMessageData) data;
+   }
+
+   public UserName getUserNameData() {
+      return (UserName) data;
    }
 
    public long getTimestamp() {

@@ -1,5 +1,5 @@
 package ru.shift.common;
 
-public record UserName(String text) implements MessageData {
+public record UserName(String name) implements MessageData {
 
 }
